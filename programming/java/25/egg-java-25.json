@@ -1,0 +1,42 @@
+{
+  "_comment": "Baseado em parkervcp/eggs generic/java/egg-java.json (MIT). Fonte: https://github.com/parkervcp/eggs. Adaptado para a imagem ghcr.io/parkervcp/yolks:java_25. O script de instalação não baixa nada: envie o JAR pelo gerenciador de arquivos.",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": "2026-11-17T21:42:18+0000",
+  "name": "Java 25 (Generic JAR)",
+  "author": "sneaky@sneakyhub.com (original), eltonacosta (adaptação por versão)",
+  "description": "Egg genérico para aplicações Java 25 (JAR). Envie o JAR para o servidor, defina JARFILE e inicie. Imagem Docker: ghcr.io/parkervcp/yolks:java_25. Baseado no Generic Java do parkervcp/eggs (MIT).",
+  "features": null,
+  "docker_images": {
+    "Java 25": "ghcr.io/parkervcp/yolks:java_25"
+  },
+  "file_denylist": [],
+  "startup": "java -Dterminal.jline=false -Dterminal.ansi=true -jar {{JARFILE}}",
+  "config": {
+    "files": "{}",
+    "startup": "{\"done\":[\"Done\",\"Started\",\"Listening on\",\"Server started\"]}",
+    "logs": "{}",
+    "stop": "^C"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\n# Generic Java egg - sem download automático.\n# Envie o JAR pelo gerenciador de arquivos e defina a variável JARFILE.\nset -e\nmkdir -p /mnt/server\ncd /mnt/server\n",
+      "container": "ghcr.io/parkervcp/yolks:debian",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "JAR FILE",
+      "description": "Nome do arquivo JAR dentro do diretório do servidor (ex.: app.jar).",
+      "env_variable": "JARFILE",
+      "default_value": "server.jar",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|max:255",
+      "field_type": "text"
+    }
+  ]
+}
