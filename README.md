@@ -1,87 +1,59 @@
-# Panel Eggs — Java 17+
+# Panel Eggs
 
-Eggs genéricos de **Java (JAR)** para **FeatherPanel** e **Pterodactyl**, separados por versão do JDK.
+Repositório centralizado de eggs para **FeatherPanel** e **Pterodactyl**.
 
-> Estes eggs são para o módulo de **servidores** (FeatherWings no FeatherPanel / Wings no Pterodactyl).
-> No **nó web** do FeatherPanel (FeatherQuilld), o equivalente é um **WebPlate**, não um egg.
+O objetivo é manter os eggs em um único local controlado, versionado e auditável, reduzindo a dependência de arquivos espalhados por fontes não verificadas. A proposta não é substituir uma auditoria de segurança, mas dar uma base rastreável: cada egg tem origem, histórico e hash.
 
-## Estrutura
+## Conteúdo
 
-```text
-programming/
-└── java/
-    ├── 17/
-    │   ├── egg-java-17.json
-    │   └── README.md
-    ├── 19/
-    ├── 21/
-    ├── 22/
-    ├── 25/
-    ├── 26/
-    ├── 27/
-    └── README.md
+- `programming/java/` — eggs genéricos para aplicações Java (JAR), versões 17 a 27.
+
+## Segurança e integridade
+
+- Curadoria e revisão manual antes de cada commit.
+- Estrutura versionada; alterações ficam registradas no histórico Git.
+- `SHA256SUMS` com o hash de cada egg, para verificação antes da importação.
+- Scripts de instalação revisados; sem downloads remotos opacos ou código ofuscado.
+- Imagens Docker públicas e declaradas explicitamente no egg.
+- Contribuições passam por revisão; qualquer alteração em um egg exige atualização do hash.
+- Checksums ajudam a detectar alterações indevidas, mas não autenticam sozinhos o autor. Para garantia mais forte, use commits assinados/tags e revise o histórico.
+
+Detalhes do modelo de segurança e das limitações: [SECURITY.md](./SECURITY.md).
+
+## Verificar a integridade
+
+```bash
+./scripts/verify.sh
 ```
 
-## Versões incluídas
+Ou manualmente:
 
-| Versão | Canal | Imagem Docker | Pasta |
-|---|---|---|---|
-| 17 | LTS | `ghcr.io/parkervcp/yolks:java_17` | [`programming/java/17`](./programming/java/17/) |
-| 19 | non-LTS | `ghcr.io/parkervcp/yolks:java_19` | [`programming/java/19`](./programming/java/19/) |
-| 21 | LTS | `ghcr.io/parkervcp/yolks:java_21` | [`programming/java/21`](./programming/java/21/) |
-| 22 | non-LTS | `ghcr.io/parkervcp/yolks:java_22` | [`programming/java/22`](./programming/java/22/) |
-| 25 | LTS | `ghcr.io/parkervcp/yolks:java_25` | [`programming/java/25`](./programming/java/25/) |
-| 26 | non-LTS | `ghcr.io/parkervcp/yolks:java_26` | [`programming/java/26`](./programming/java/26/) |
-| 27 | latest (non-LTS) | `ghcr.io/parkervcp/yolks:java_27` | [`programming/java/27`](./programming/java/27/) |
-
-As versões **18, 20, 23 e 24** não estão incluídas porque não existe tag `java_*` correspondente no `ghcr.io/parkervcp/yolks`.
-
-## Como importar no FeatherPanel
-
-1. Entre no painel como administrador.
-2. Vá em **Admin → Templates → Realms (Nests)** e crie um Realm, por exemplo `Programming`.
-3. Vá em **Admin → Templates → Spells (Eggs)** e use **Import** (importar egg/spell).
-4. Selecione o JSON da versão desejada, por exemplo `programming/java/21/egg-java-21.json`, e escolha o Realm `Programming`.
-5. Revise as variáveis e salve o Spell.
-6. Para criar um servidor: **Admin → Servers → Create Server**, escolha o Realm/Spell, o nó de jogo (no seu caso, **NODE 01**) e os recursos.
-7. Abra o servidor → **Files** → envie o arquivo `.jar` para a raiz do servidor.
-8. Abra **Startup**, ajuste `JARFILE` para o nome do arquivo (ex.: `app.jar`) e inicie.
-
-### Se o servidor ficar em “Starting”
-
-O egg genérico não conhece o texto que a sua aplicação imprime quando termina de iniciar. Edite a **detecção de startup** do Spell (`config.startup.done`) para uma linha real do log, por exemplo:
-
-```json
-{
-  "done": "Started"
-}
+```bash
+sha256sum -c SHA256SUMS
 ```
 
-O padrão incluído procura por `Done`, `Started`, `Listening on` ou `Server started`.
+## Importar
 
-## Como importar no Pterodactyl
+**FeatherPanel**
 
-1. **Admin → Nests → Create Nest** (ex.: `Programming`).
-2. **Admin → Nests → Import Egg**.
-3. Selecione o JSON da versão desejada e o Nest criado.
-4. Crie o servidor usando o egg, envie o JAR pelo File Manager, ajuste `JARFILE` e inicie.
+1. **Admin → Templates → Realms (Nests)** → crie o Realm desejado.
+2. **Admin → Templates → Spells (Eggs)** → **Import** → selecione o JSON e o Realm.
+3. Revise variáveis e script de instalação antes de salvar.
 
-## Detalhes do egg
+**Pterodactyl**
 
-- Startup: `java -Dterminal.jline=false -Dterminal.ansi=true -jar {{JARFILE}}`
-- Variável: `JARFILE` (padrão `server.jar`)
-- Instalação: não baixa nada; o JAR é enviado pelo gerenciador de arquivos.
-- Imagem de instalação: `ghcr.io/parkervcp/yolks:debian`
-- As imagens de runtime são públicas, mas o nó precisa conseguir acessar o `ghcr.io` para baixá-las.
+1. **Admin → Nests** → crie o Nest desejado.
+2. **Admin → Nests → Import Egg** → selecione o JSON.
 
-## Origem e licença
+Antes de importar, verifique o hash e leia o script de instalação e as variáveis. O passo a passo detalhado está em [`programming/java/README.md`](./programming/java/README.md).
 
-Baseado no egg **Generic Java** do repositório [`parkervcp/eggs`](https://github.com/parkervcp/eggs), licença MIT.
+## Contribuir
 
-- Arquivo original: `generic/java/egg-java.json`
-- Autor original do egg: `sneaky@sneakyhub.com`
-- Copyright (c) 2018 Michael Parker e contribuidores
+- Abra um PR com o JSON, a origem/licença e o hash atualizado.
+- Não envie scripts obfuscados, downloads de URLs não declaradas ou comandos destrutivos.
+- Prefira imagens oficiais e versões explícitas.
+- Descreva a finalidade do egg e o que ele executa.
 
-As modificações deste repositório criam uma variante por versão do Java, restringem a imagem Docker à versão correspondente, ajustam nome/descrição/variável `JARFILE` e simplificam o script de instalação.
+## Licença
 
-Veja [LICENSE](./LICENSE) e [NOTICE.md](./NOTICE.md).
+MIT. Veja [LICENSE](./LICENSE) e [NOTICE.md](./NOTICE.md).
